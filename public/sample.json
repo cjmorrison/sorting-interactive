@@ -1,0 +1,35 @@
+{
+    "interactiveTitle": "My Sorting Interactive",
+    "questions": [{
+            "text": "This one is some meat",
+            "answerKey": "a"
+        },
+        {
+            "text": "This one is a line from a popular book",
+            "answerKey": "b"
+        },
+        {
+            "text": "<p>what the hec is this?</p><img src=\"https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg\" alt='an adorible and fuzzy creature with orange fur'/>",
+            "answerKey": "c"
+        },
+        {
+            "text": "this is made from a pig (the same answer can be vaild for 2 diffent questions)",
+            "answerKey": "a"
+        }
+    ],
+    "answers": [{
+        "key": "a",
+        "text": "<img src=\"https://baconmockup.com/300/200\" alt=\"bacon\">"
+    }, {
+        "key": "b",
+        "text": "In the beginning the Universe was created. This had made many people very angry and has been widely regarded as a bad move."
+    }, {
+        "key": "c",
+        "text": "This is a cat"
+    }, {
+        "text": "This is a false answer, not vaild to any question to make things spicy"
+    }, {
+        "text": "<img src=\"https://cdn-prod.medicalnewstoday.com/content/images/articles/284/284823/one-big-cabbage.jpg\" alt=\"green thing\" />"
+    }]
+
+}
