@@ -1,0 +1,28 @@
+.sortingInteractive {
+  max-width: 720px;
+  font-family: Arial, Helvetica, sans-serif;
+
+  img {
+    max-width: 90%;
+    margin: 0px auto;
+    display: block;
+  }
+
+  .si_header {
+    width: 100%;
+  }
+  .instructionText {
+    font-family: "Courier New", Courier, monospace;
+    text-align: left;
+  }
+
+  .si_questionText {
+    text-align: left;
+    padding-bottom: 10px;
+  }
+
+  .si_answerText {
+    text-align: left;
+    padding: 10px 0px;
+  }
+}

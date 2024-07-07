@@ -2,24 +2,28 @@
     "interactiveTitle": "My Sorting Interactive",
     "questions": [{
             "text": "This one is some meat",
-            "answerKey": "a"
+            "answerKey": "a",
+            "feedback": "this is using randomly generated meat image from baconmockup.com"
         },
         {
             "text": "This one is a line from a popular book",
-            "answerKey": "b"
+            "answerKey": "b",
+            "feedback": "this is the opening line from Hitchhikers Guide to the Galaxy"
         },
         {
-            "text": "<p>what the hec is this?</p><img src=\"https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg\" alt='an adorible and fuzzy creature with orange fur'/>",
-            "answerKey": "c"
+            "text": "<p>What the hec is this?</p><img src=\"https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg\" alt='an adorible and fuzzy creature with orange fur'/>",
+            "answerKey": "c",
+            "feedback": "thats a cat"
         },
         {
-            "text": "this is made from a pig (the same answer can be vaild for 2 diffent questions)",
-            "answerKey": "a"
+            "text": "this is made from a pig",
+            "answerKey": "a",
+            "feedback": "also bacon the same answer can be vaild for 2 diffent questions"
         }
     ],
     "answers": [{
         "key": "a",
-        "text": "<img src=\"https://baconmockup.com/300/200\" alt=\"bacon\">"
+        "text": "<img src=\"https://baconmockup.com/350/350\" alt=\"bacon\">"
     }, {
         "key": "b",
         "text": "In the beginning the Universe was created. This had made many people very angry and has been widely regarded as a bad move."

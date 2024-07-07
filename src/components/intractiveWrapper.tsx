@@ -1,22 +1,29 @@
 import React from "react";
+import "./sortingIntractive.scss";
+import deepcopy from "deepcopy";
+
 import Box from "@mui/material/Box";
 import MobileStepper from "@mui/material/MobileStepper";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
+interface QuestionsData {
+  text: string;
+  answerKey: string;
+  feedback: string;
+}
+
+interface AnswersData {
+  text: string;
+  key?: string;
+}
+
 interface QuestionData {
   interactiveTitle: string;
-  questions: Array<{
-    text: string;
-    answerKey: string;
-  }>;
-  answers: Array<{
-    text: string;
-    key?: string;
-  }>;
+  questions: Array<QuestionsData>;
+  answers: Array<AnswersData>;
 }
 
 interface PropType {
@@ -25,6 +32,7 @@ interface PropType {
 interface StateType {
   langData: object;
   questionData: QuestionData;
+  displayState: string;
   currentQuestion: number;
   activeStep: number;
 }
@@ -36,6 +44,8 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
   defaultLang: string = "en";
   langSelection: string = this.defaultLang;
   stepperSteps: Array<{ label: string; description: string }> = [];
+  correctResponce: boolean = false;
+  score: number = 0;
 
   state = {
     langData: {},
@@ -45,6 +55,7 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
         {
           text: "question",
           answerKey: "a",
+          feedback: "",
         },
       ],
       answers: [
@@ -54,6 +65,7 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
         },
       ],
     },
+    displayState: "question",
     currentQuestion: 0,
     activeStep: 0,
   };
@@ -78,7 +90,11 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
       this.usingDataSrc = "./sample.json";
     }
 
-    this.getQuestionData().then((e) => console.log(e));
+    this.getQuestionData().then(() => {
+      this.shuffleAnswerData().then(() => {
+        this.shuffleAnswerData();
+      });
+    });
   };
 
   getLangData = () => {
@@ -129,6 +145,36 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
     });
   };
 
+  shuffleAnswerData = () => {
+    return new Promise((resolve, reject) => {
+      // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+      let qDataCopy = deepcopy(this.state.questionData);
+      let array = qDataCopy.answers;
+      let currentIndex = array.length;
+      while (currentIndex !== 0) {
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex],
+          array[currentIndex],
+        ];
+      }
+
+      qDataCopy.answers = array;
+
+      this.setState(
+        {
+          questionData: qDataCopy,
+        },
+        () => {
+          resolve(array);
+        }
+      );
+
+      return array;
+    });
+  };
+
   langKey = (key: string) => {
     return this.state.langData[key] as string;
   };
@@ -152,30 +198,49 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
     this.setState({ activeStep: this.state.activeStep - 1 });
   };
 
-  render() {
-    return (
-      <div className="sortingInteractive">
-        <h2> {this.state.questionData.interactiveTitle} </h2>
-        <div className="instructionText">
-          <p>
-            <strong> Instructions: </strong> Select the arrow buttons to cycle
-            for best response to the following statment.Once you have selected
-            the best responce, check your answer with the button below.
-          </p>
-        </div>
+  handleAnswerSelection = () => {
+    this.correctResponce =
+      this.state.questionData.answers[this.state.activeStep].key ===
+      this.state.questionData.questions[this.state.currentQuestion].answerKey;
+    this.setState({ displayState: "feedback" });
+  };
 
-        <Box sx={{ maxWidth: 400, flexGrow: 1 }}>
-          <Paper
-            square
-            elevation={0}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              height: 50,
-              pl: 2,
-              bgcolor: "background.default",
-            }}
-          >
+  handleNextQuestionSelection = () => {
+    if (
+      this.state.currentQuestion + 1 >=
+      this.state.questionData.questions.length
+    ) {
+      this.setState({
+        currentQuestion: 0,
+        displayState: "end",
+        activeStep: 0,
+      });
+    } else {
+      this.setState({
+        currentQuestion: this.state.currentQuestion + 1,
+        displayState: "question",
+        activeStep: 0,
+      });
+    }
+  };
+
+  handleReset = () => {
+    this.shuffleAnswerData();
+    this.score = 0;
+    this.setState({
+      displayState: "question",
+    });
+  };
+
+  render() {
+    const buildQuestionDisplayState = () => {
+      return (
+        <Box className="si_questionDisplay">
+          <Box className="si_questionText">
+            <h3>
+              Question {this.state.currentQuestion + 1} of{" "}
+              {this.state.questionData.questions.length}
+            </h3>
             <Box
               dangerouslySetInnerHTML={{
                 __html:
@@ -183,9 +248,10 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
                     .text,
               }}
             ></Box>
-          </Paper>
+          </Box>
+          <hr />
           <Box
-            sx={{ height: 255, maxWidth: 400, width: "100%", p: 2 }}
+            className="si_answerText"
             dangerouslySetInnerHTML={{
               __html:
                 this.state.questionData.answers[this.state.activeStep].text,
@@ -218,8 +284,92 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
               </Button>
             }
           />
+          <Button
+            variant="contained"
+            size="medium"
+            onClick={this.handleAnswerSelection}
+          >
+            Select Answer
+          </Button>
         </Box>
-      </div>
+      );
+    };
+
+    const buildFeedbackDisplayState = () => {
+      const correctStatusDisplay = () => {
+        if (this.correctResponce) {
+          this.score++;
+          return (
+            <Box className="si_isCorrectIndicator si_correct">Correct!</Box>
+          );
+        } else {
+          return (
+            <Box className="si_isCorrectIndicator si_incorrect">Incorrect</Box>
+          );
+        }
+      };
+
+      return (
+        <Box className="si_feedbackDisplay">
+          {correctStatusDisplay()}
+          <p>
+            {
+              this.state.questionData.questions[this.state.currentQuestion]
+                .feedback
+            }
+          </p>
+          <Button
+            variant="contained"
+            size="medium"
+            onClick={this.handleNextQuestionSelection}
+          >
+            Next Question
+          </Button>
+        </Box>
+      );
+    };
+
+    const buildEndScreenDisplayState = () => {
+      return (
+        <Box className="si_endScreenDisplay">
+          <p>
+            Congratulations! You've scored {this.score} of{" "}
+            {this.state.questionData.questions.length}
+          </p>
+          <Button variant="contained" size="medium" onClick={this.handleReset}>
+            Reset
+          </Button>
+        </Box>
+      );
+    };
+
+    const setDisplayState = () => {
+      if (this.state.displayState === "question") {
+        return <div>{buildQuestionDisplayState()}</div>;
+      } else if (this.state.displayState === "feedback") {
+        return <div>{buildFeedbackDisplayState()}</div>;
+      } else if (this.state.displayState === "end") {
+        return <div>{buildEndScreenDisplayState()}</div>;
+      } else {
+        console.error(`invaild display state ${this.state.displayState}`);
+      }
+    };
+
+    return (
+      <Box className="sortingInteractive">
+        <h2 className="si_header">
+          {this.state.questionData.interactiveTitle}
+        </h2>
+
+        <div className="instructionText">
+          <p>
+            <strong> Instructions: </strong> Select the arrow buttons to cycle
+            for best response to the following statment.Once you have selected
+            the best responce, check your answer with the button below.
+          </p>
+        </div>
+        {setDisplayState()}
+      </Box>
     );
   }
 }
