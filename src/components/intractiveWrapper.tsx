@@ -21,7 +21,7 @@ interface AnswersData {
 }
 
 interface QuestionData {
-  interactiveTitle: string;
+  interactiveTitle?: string;
   questions: Array<QuestionsData>;
   answers: Array<AnswersData>;
 }
@@ -76,15 +76,16 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
   }
 
   componentDidMount = () => {
-    this.getLangData();
+    //this.getLangData();
     console.log("MpsPlayer ready");
 
     if ((window as any).si_srcOverride) {
       this.usingDataSrc = (window as any).si_srcOverride as string;
     }
-    if ((window as any).parent && (window as any).parent.si_srcOverride) {
-      this.usingDataSrc = (window as any).parent.si_srcOverride as string;
-    } else if (this.props.src) {
+    // if ((window as any).parent && (window as any).parent.si_srcOverride) {
+    //   this.usingDataSrc = (window as any).parent.si_srcOverride as string;
+    // }
+    else if (this.props.src) {
       this.usingDataSrc = this.props.src;
     } else {
       this.usingDataSrc = "./sample.json";
@@ -233,6 +234,20 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
   };
 
   render() {
+    const buildHeader = ()  => {
+      if(this.state.questionData.interactiveTitle){
+        return(
+                <h2 className="si_header">
+      {this.state.questionData.interactiveTitle}
+    </h2>
+        )
+      } else {
+        return("")
+      }
+
+
+    }
+
     const buildQuestionDisplayState = () => {
       return (
         <Box className="si_questionDisplay">
@@ -284,13 +299,15 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
               </Button>
             }
           />
-          <Button
-            variant="contained"
-            size="medium"
-            onClick={this.handleAnswerSelection}
-          >
-            Select Answer
-          </Button>
+          <Box className="si_answerButtonContainer">
+            <Button
+              variant="contained"
+              size="medium"
+              onClick={this.handleAnswerSelection}
+            >
+              Select Answer
+            </Button>
+          </Box>
         </Box>
       );
     };
@@ -357,10 +374,7 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
 
     return (
       <Box className="sortingInteractive">
-        <h2 className="si_header">
-          {this.state.questionData.interactiveTitle}
-        </h2>
-
+        {buildHeader()}
         <div className="instructionText">
           <p>
             <strong> Instructions: </strong> Select the arrow buttons to cycle

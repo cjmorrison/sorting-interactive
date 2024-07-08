@@ -1,11 +1,14 @@
 .sortingInteractive {
-  max-width: 720px;
   font-family: Arial, Helvetica, sans-serif;
 
   img {
     max-width: 90%;
     margin: 0px auto;
     display: block;
+  }
+
+h2, h3, h4, h5, h6 {
+    text-align: left;
   }
 
   .si_header {
@@ -25,4 +28,9 @@
     text-align: left;
     padding: 10px 0px;
   }
+
+  .si_answerButtonContainer {
+    text-align: center;
+  }
+
 }
